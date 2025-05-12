@@ -2,7 +2,7 @@
 #author: Roland Faure
 
 date = "2020-05-07"
-version = "0.1"
+version = "0.1.1"
 
 import argparse
 import sys
@@ -53,7 +53,7 @@ def merge_adjacent_contigs_GFA(gfa_in, gfa_out):
                 lengths[line[1]] = len(line[2])
                 #look for the depth
                 for field in line[3:] :
-                    if field[:2] == "DP" :
+                    if field[:2].upper() == "DP" :
                         depths[line[1]] = float(field[5:])
                         break
 
@@ -270,12 +270,15 @@ def main() :
         if ls[0] == "S" :
             #try to parse the depth of the contig
             depth = 0
+            found_depth = False
             for i in ls :
-                if i.startswith("DP") :
+                if i.upper().startswith("DP") :
                     depth = float(i[5:])
-            if depth == 0 :
+                    found_depth=True
+            if not found_depth :
                 print("Warning: no depth information for contig ", ls[1])
             set_of_contigs[ls[1]] = (len(ls[2]), depth)
+            links[ls[1]] = [[],[]]
 
         elif ls[0] == "L" :
             end1 = 1
